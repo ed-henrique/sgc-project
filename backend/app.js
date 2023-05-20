@@ -1,11 +1,10 @@
-import "./dotenv.js";
+import cors from "cors";
 import express from "express";
 import routes from "./routes/index.js";
 import sequelize from "./config/sequelize.js";
-import cors from "cors";
 
-const app = express();
 const PORT = 3000;
+const app = express();
 
 // MIDDLEWARE
 app.use(cors());

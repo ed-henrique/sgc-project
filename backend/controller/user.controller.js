@@ -12,12 +12,12 @@ export class UserController {
     return users;
   }
 
-  async adicionar(userData) {
-    let userExist = await this.user.findOne({
+  async add(userData) {
+    let userExists = await this.user.findOne({
       where: { email: userData.email },
     });
 
-    if (userExist) {
+    if (userExists) {
       return {
         error: true,
         message: "Usuário já existe",
@@ -25,26 +25,26 @@ export class UserController {
     }
 
     const { name, email, password } = userData;
-    const userNew = { name, email, password };
+    const newUser = { name, email, password };
 
     // Criptografar a senha
-    userNew.password = await bcrypt.hash(userNew.password, 8);
+    newUser.password = await bcrypt.hash(newUser.password, 8);
 
     try {
-      const userCreate = await this.user.create(userNew);
-      console.log("aqui 1'", userCreate);
-      return userCreate;
+      const createUser = await this.user.create(newUser);
+      console.log("aqui 1'", createUser);
+      return createUser;
     } catch (error) {
       console.log(error);
     }
   }
 
   async login(userData) {
-    let userExist = await this.user.findOne({
+    let userExists = await this.user.findOne({
       where: { email: userData.email },
     });
 
-    if (!userExist) {
+    if (!userExists) {
       return {
         error: true,
         message: "Usuário não existe",
@@ -52,7 +52,7 @@ export class UserController {
     }
 
     // Como o usuário existe vanmos verificar se a senha está correta
-    if (!(await bcrypt.compare(userData.password, userExist.password))) {
+    if (!(await bcrypt.compare(userData.password, userExists.password))) {
       return {
         error: true,
         message: "Senha inválida",
@@ -63,10 +63,10 @@ export class UserController {
     return {
       error: false,
       user: {
-        name: userExist.name,
-        email: userExist.email,
+        name: userExists.name,
+        email: userExists.email,
       },
-      token: jwt.sign({ id: userExist.id }, auth.secret, {
+      token: jwt.sign({ id: userExists.id }, auth.secret, {
         expiresIn: auth.expireIn,
       }),
     };

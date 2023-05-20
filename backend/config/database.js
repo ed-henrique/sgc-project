@@ -1,3 +1,5 @@
+import "../dotenv.js";
+
 export const database = {
   dialect: "postgres",
   host: process.env.DB_HOST_LOCAL,

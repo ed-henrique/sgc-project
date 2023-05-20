@@ -1,6 +1,11 @@
-# sgc-project
+# Sistema de Gestão de Cursos (SGC)
 
-## Banco de dados PostgreSQL
-## Disciplina DCC603 - Banco de Dados II - 2023.1
-### Prof. Acauan Ribeiro
+Projeto final para a disciplina de Banco de Dados II, ministrada pelo [Prof. Acauan Ribeiro](https://github.com/acauanrr).
+
+## Tecnologias utilizadas
+
+- Node.js
+- Express.js
+- Blockchain
+- Banco de dados PostgreSQL
 

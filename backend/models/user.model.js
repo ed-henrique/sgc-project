@@ -1,8 +1,8 @@
 const user = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    "User",
+    "Usuario",
     {
-      name: {
+      nome_completo: {
         type: DataTypes.STRING,
       },
       email: {
@@ -11,9 +11,12 @@ const user = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.STRING,
       },
+      whatsapp: {
+        type: DataTypes.STRING,
+      },
     },
     {
-      tableName: "user",
+      tableName: "usuario",
     }
   );
   return User;
