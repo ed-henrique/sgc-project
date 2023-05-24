@@ -1,14 +1,14 @@
-import express from "express";
+import { Router } from "express";
 import users from "./users.js";
-import cursos from "./cursos.js";
+import courses from "./course.js";
 
-const router = express.Router();
+const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   res.send("Pagina inicial");
 });
 
 router.use("/users", users);
-router.use("/cursos", cursos);
+router.use("/courses", courses);
 
 export default router;

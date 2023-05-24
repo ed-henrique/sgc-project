@@ -8,6 +8,9 @@ const user = (sequelize, DataTypes) => {
       email: {
         type: DataTypes.STRING,
       },
+      level: {
+        type: DataTypes.STRING,
+      },
       password: {
         type: DataTypes.STRING,
       },
