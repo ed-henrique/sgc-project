@@ -1,3 +1,11 @@
+import sequelize from "../config/sequelize.js";
+import { DataTypes } from "sequelize";
+import Course from "./course.model.js";
+import User from "./user.model.js";
+
+const course = Course(sequelize, DataTypes);
+const user = User(sequelize, DataTypes);
+
 const subscription = (sequelize) => {
   const Subscription = sequelize.define(
     "Inscricao",
@@ -7,10 +15,8 @@ const subscription = (sequelize) => {
     }
   );
 
-  Subscription.hasOne(User);
-  User.belongsTo(Subscription);
-  Subscription.hasMany(Course);
-  Course.belongsToMany(Subscription);
+  user.belongsToMany(course, { through: Subscription });
+  course.belongsToMany(user, { through: Subscription });
 
   return Subscription;
 };

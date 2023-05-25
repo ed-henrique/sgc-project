@@ -4,7 +4,7 @@ import { UserController } from "../controller/user.controller.js";
 import AuthMiddleware from "../middlewares/AuthMiddleware.js";
 
 const router = Router();
-const userController = UserController(user);
+const userController = new UserController(user);
 
 router.get("/", AuthMiddleware, async (req, res) => {
   console.log(req.user_id)
@@ -13,8 +13,8 @@ router.get("/", AuthMiddleware, async (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-  const { name, email, password } = req.body;
-  const resp = await userController.add({ name, email, password });
+  const { name, email, level, whatsapp, password } = req.body;
+  const resp = await userController.add({ name, email, level, whatsapp, password });
 
   if (resp.error) {
     return res.status(400).json(resp);

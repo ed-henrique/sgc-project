@@ -1,14 +1,14 @@
 import express from "express";
-import { curso } from "../models/index.js";
-import { CursoController } from "../controller/curso.controller.js";
+import { course } from "../models/index.js";
+import { CourseController } from "../controller/course.controller.js";
 import { body, validationResult } from "express-validator";
 const router = express.Router();
 
-const cursoController = new CursoController(curso);
+const courseController = new CourseController(course);
 
 router.get("/", async (req, res) => {
-  const cursos = await cursoController.getAll();
-  res.json(cursos);
+  const courses = await courseController.getAll();
+  res.json(courses);
 });
 
 router.post(
@@ -30,8 +30,8 @@ router.post(
 
     //se os dados forem válidos, o sistema executará aqui
     const { nome, ch, categoria } = req.body;
-    await cursoController.adicionar({ nome, ch, categoria });
-    res.status(201).send("Curso criado com sucesso!");
+    await courseController.adicionar({ nome, ch, categoria });
+    res.status(201).send("curso criado com sucesso!");
   }
 );
 

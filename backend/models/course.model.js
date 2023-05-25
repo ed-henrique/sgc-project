@@ -16,7 +16,7 @@ const course = (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: "curso",
+      tableName: "course",
     }
   );
   return Course;

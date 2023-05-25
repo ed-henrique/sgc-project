@@ -24,8 +24,8 @@ export class UserController {
       };
     }
 
-    const { name, email, password } = userData;
-    const newUser = { name, email, password };
+    const { name, level, email, whatsapp, password } = userData;
+    const newUser = { nome_completo: name, email, level, password, whatsapp };
 
     // Criptografar a senha
     newUser.password = await bcrypt.hash(newUser.password, 8);

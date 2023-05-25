@@ -1,5 +1,10 @@
-import { Course } from "./course.model.js";
-import { Category } from "./category.model.js";
+import sequelize from "../config/sequelize.js";
+import { DataTypes } from "sequelize";
+import Course from "./course.model.js";
+import Category from "./category.model.js";
+
+const course = Course(sequelize, DataTypes);
+const category = Category(sequelize, DataTypes);
 
 const courseCategory = (sequelize) => {
   const CourseCategory = sequelize.define(
@@ -10,10 +15,8 @@ const courseCategory = (sequelize) => {
     }
   );
 
-  CourseCategory.hasOne(Course);
-  Course.belongsTo(CourseCategory);
-  CourseCategory.hasMany(Category);
-  Category.belongsToMany(CourseCategory);
+  course.belongsToMany(category, { through: CourseCategory });
+  category.belongsToMany(course, { through: CourseCategory });
 
   return CourseCategory;
 };
