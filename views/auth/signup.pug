@@ -1,0 +1,23 @@
+extends auth_layout
+
+block content
+  main.d-flex.flex-column.justify-content-center.align-items-center
+    .auth.animate__animated.animate__fadeIn.container.py-3.px-3
+        h2.text-center Signup
+        form(action="/users/signup", method="POST")
+            .mb-3
+                label(for="name", class="form-label") Name
+                input(type="text", class="form-control", id="name")
+            .mb-3
+                label(for="email", class="form-label") Email
+                input(type="email", class="form-control", id="email")
+            .mb-3
+                label(for="password", class="form-label") Password
+                input(type="password", class="form-control", id="password")
+            .mb-3
+                label(for="confirmPassword", class="form-label") Confirm Password
+                input(type="password", class="form-control", id="confirmPassword")
+            .w-100.text-center.flex-column.d-flex.align-items-center.justify-content-center
+                button(type="submit", class="btn btn-primary mb-3") Submit
+                span Already have an account yet? 
+                    a(href="/users/login") Log In

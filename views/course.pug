@@ -1,0 +1,17 @@
+extends layout
+
+block head
+  link(rel="stylesheet", href="/stylesheets/course.css")
+
+block content
+  main(class="container d-flex align-items-center justify-content-center")
+    .card
+      img(class="card-img-top" src="/images/stock.jpg", alt="...")
+      .card-body
+        h5(class="card-title") #{course.name}
+        p(class="card-text") #{course.description}
+      ul(class="list-group list-group-flush")
+        li(class="list-group-item") #{course.Category.name}
+        li(class="list-group-item") #{course.workload}h
+      .card-body
+        a(href="#", class="btn btn-primary") Close

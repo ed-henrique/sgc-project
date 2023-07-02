@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  main(class="container d-flex align-items-center justify-content-center")
+    table.table.table-striped.w-75
+      thead
+        tr
+          th.col Image
+          th.col Name
+          th.col Role
+          th.col Email
+          th.col.text-center Actions
+      tbody
+        each user in users
+          - const status = user.status === 'Active' ? 'dark' : 'primary'
+
+          tr(class=`align-middle${user.status === 'Active' ? '' : ' table-dark'}`)
+            td
+              img(src=user.image, alt=user.name, class="rounded-circle")
+            td #{user.name}
+            td #{user.role}
+            td #{user.email}
+            td.text-center
+              if user.role === 'Student' && user.status === 'Active'
+                button(class=`btn btn-warning btn-sm me-2`, onclick=`/users/upgrade/${user.id}`)
+                  i.bx.bx-crown
+              button(class=`btn btn-${status} btn-sm`, onclick=`/users/delete/${user.id}`)
+                i.bx.bx-power-off

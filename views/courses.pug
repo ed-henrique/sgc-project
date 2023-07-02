@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  main(class="container d-flex align-items-center justify-content-center")
+    .row.justify-content-center
+      each course, index in courses
+        - const start_date = course.start_date.toString().slice(0, 16)
+
+        div(class=`col-sm-3${(index <= courses.length - (1 + courses.length % 4)) ? ' mb-3' : ''}`)
+          .card.h-100
+            img(class="card-img-top" src=course.image, alt=course.name)
+            .card-body
+              h5(class="card-title") #{course.name}
+              p(class="card-text") #{course.description}
+            ul(class="list-group list-group-flush")
+              li(class="list-group-item d-flex align-items-center")
+                i.bx.bx-bookmark.pe-1
+                | #{course.Category.name}
+              li(class="list-group-item d-flex align-items-center")
+                i.bx.bx-time-five.pe-1
+                | #{course.workload}h
+              li(class="list-group-item d-flex align-items-center")
+                i.bx.bx-calendar.pe-1
+                | #{start_date}
+              li(class="list-group-item d-flex align-items-center")
+                i.bx.bx-info-circle.pe-1
+                | #{course.status}
+            .card-body.text-end.mt-auto
+              a(href=`/courses/course/${course.id}`, class="btn btn-primary") Access

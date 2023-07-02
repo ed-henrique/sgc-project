@@ -1,0 +1,73 @@
+$black = #131515ff
+$gray = #2b2c28ff
+$light-gray = rgb(170, 170, 170)
+$dark-green = #339989ff
+$light-green = #7de2d1ff
+$white = #fffafbff
+
+body
+    min-height 100vh
+    color $white
+    background-color $black
+    font-family 'Rubik', sans-serif
+
+header
+    height 60px
+    overflow hidden
+    background-color $light-green
+
+.navbar span
+    color $black
+
+.navbar img
+    width 40px
+    height 40px
+    object-fit cover
+    object-position center
+    box-shadow 0 0 40px 5px $dark-green
+    border-radius 50%
+
+.navbar-nav .active
+    text-decoration underline
+    text-decoration-color $gray
+
+.greetings
+    color $black
+    border-right 1px solid $black
+
+.btn-primary
+    background-color $dark-green
+    border-color $dark-green
+
+main
+    min-height 100vh
+    margin 30px 0
+
+.card
+    border none
+
+.card ul li
+    color $light-gray
+
+.card-body
+    flex none
+
+table
+    border-radius var(--bs-border-radius)
+    overflow hidden
+
+.table > :not(caption) > * > *
+    border-bottom none
+
+td img
+    width 40px
+    height 40px
+
+tr td
+    margin: auto 0
+
+footer
+    width 100vw
+    height 30px
+    font-size 0.8rem
+    background-color $dark-green

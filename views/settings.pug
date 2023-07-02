@@ -1,0 +1,25 @@
+extends layout
+
+block head
+  link(rel="stylesheet", href="/stylesheets/course.css")
+
+block content
+  main(class="container d-flex align-items-center justify-content-center")
+    form(class="d-flex flex-column", action="/users/update", method="POST")
+      .mb-3
+        label(for="name", class="form-label") Email address
+        input(type="text", class="form-control", id="name", placeholder="Update your name", value=`${user.name}`)
+      .mb-3
+        label(for="currentPassword", class="form-label") Current Password
+        input(type="password", class="form-control", id="currentPassword")
+      .mb-3
+        label(for="newPassword", class="form-label") New Password
+        input(type="password", class="form-control", id="newPassword")
+      .mb-3
+        label(for="newPasswordConfirmation", class="form-label") Confirm New Password
+        input(type="password", class="form-control", id="newPasswordConfirmation")
+      .mb-3.form-check
+        input(type="checkbox", class="form-check-input", id="changePassword")
+        label(class="form-check-label", for="changePassword") Change Password
+      .d-flex.justify-content-between
+        button(type="submit", class="btn btn-primary ms-auto") Update

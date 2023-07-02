@@ -1,0 +1,49 @@
+- const nav_home = active_nav === "home" ? " active" : ""
+- const nav_courses = active_nav === "courses" ? " active" : ""
+- const nav_users = active_nav === "users" ? " active" : ""
+- const nav_categories = active_nav === "categories" ? " active" : ""
+- const nav_certificates = active_nav === "certificates" ? " active" : ""
+
+doctype html
+html(lang="en")
+  head
+    title= title
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(rel="preconnect", href="https://fonts.googleapis.com")
+    link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap", rel="stylesheet")
+    link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM", crossorigin="anonymous")
+    link(href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css', rel='stylesheet')
+    link(rel="stylesheet", href="/stylesheets/index.css")
+  
+    block head
+  body
+    header
+      nav(class="navbar navbar-expand-lg h-100 px-4")
+        a(class="navbar-brand fw-bold", href="#") SGC
+        .collapse.navbar-collapse
+          ul(class="navbar-nav mr-auto")
+            li(class=`nav-item${nav_home}`)
+              a(class="nav-link", href="/") Home
+            li(class=`nav-item${nav_courses}`)
+              a(class="nav-link", href="/courses") Courses
+            li(class=`nav-item${nav_users}`)
+              a(class="nav-link", href="/users") Users
+            li(class=`nav-item${nav_categories}`)
+              a(class="nav-link", href="/categories") Categories
+            li(class=`nav-item${nav_certificates}`)
+              a(class="nav-link", href="/certificates") Certificates
+        ul(class="navbar-nav d-flex align-items-center justify-content-center mb-0")
+          li(class="greetings pe-3") Hey, #{username}
+          li
+            a(href="html/settings.html", class="btn btn-primary mx-3", type="submit") Settings
+          li
+            form(action="/users/logout", method="POST")
+              button(type="submit", class="btn btn-primary") Logout
+
+    block content
+
+    footer(class="container-fluid d-flex align-items-center justify-content-center py-1") Made by Eduardo Machado and Rosialdo Vidinho
+
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js", integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz", crossorigin="anonymous")
