@@ -5,8 +5,8 @@ block head
 
 block content
   main(class="container d-flex align-items-center justify-content-center")
-    .card
-      img(class="card-img-top" src="/images/stock.jpg", alt="...")
+    .card.me-5
+      img(class="card-img-top" src=course.image, alt=course.name)
       .card-body
         h5(class="card-title") #{course.name}
         p(class="card-text") #{course.description}
@@ -14,4 +14,22 @@ block content
         li(class="list-group-item") #{course.Category.name}
         li(class="list-group-item") #{course.workload}h
       .card-body
-        a(href="#", class="btn btn-primary") Close
+        a(href="/courses", class="btn btn-primary") Close
+
+    table.table.table-striped
+      thead
+        tr
+          th.col Image
+          th.col Name
+          th.col.text-center Actions
+      tbody
+        if subscriptions.length === 0
+          tr
+            td(colspan="3" class="text-center") No subscriptions found
+        else
+          each subscription in subscriptions
+            tr(class="align-middle")
+              td
+                img(src=subscription.User.image, alt=subscription.User.name)
+              td #{subscription.User.name}
+              td Oi

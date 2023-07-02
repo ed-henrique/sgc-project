@@ -5,7 +5,8 @@ const router = Router();
 
 router.get('/', auth("student"), async (req, res) => {
   const name = req.username;
-  res.render('index', { username: name, active_nav: "home" });
+  const role = req.userRole;
+  res.render('index', { username: name, role: role, active_nav: "home" });
 });
 
 module.exports = router;

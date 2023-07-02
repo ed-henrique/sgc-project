@@ -22,11 +22,12 @@ module.exports = (role) => async (req, res, next) => {
 			return res.redirect("/users/login");
 		}
 
-		if (!roles[role] || roles[decoded.role] > roles[role]) {
+		if (decoded.role !== "root" && (!roles[role] || roles[decoded.role] > roles[role])) {
 			return res.redirect("/");
 		}
 
 		req.userId = decoded.id;
+		req.userRole = decoded.role;
 		req.username = decoded.name;
 		
 		return next();

@@ -1,0 +1,30 @@
+extends layout
+
+block head
+  link(rel="stylesheet", href="/stylesheets/course.css")
+  script(type="module", src="/javascripts/course_edit.js" defer) 
+
+block content
+  main(class="container d-flex align-items-center justify-content-center")
+    form.card(action=`/courses/update/${course.id}?_method=PUT`, method="POST", enctype="multipart/form-data")
+      img(id="selected" class="card-img-top" src=course.image, alt=course.name)
+      .card-body
+        label.form-label(for="name") Course Name
+        input(required type="text", class="form-control mb-3", id="name", name="name" placeholder=course.name, value=course.name)
+        label.form-label(for="description") Course Description
+        textarea(required class="form-control mb-3", id="description", name="description" placeholder=course.description)
+          | #{course.description}
+        label.form-label(for="workload") Workload
+        input(required type="number", class="form-control mb-3", id="workload", name="workload" placeholder=course.workload, value=course.workload)
+        label.form-label(for="start_date") Start Date
+        input(required type="date", class="form-control mb-3", id="start_date", name="start_date" value=course.start_date.toISOString().substring(0,10))
+        label.form-label(for="image", class="form-label") Image
+        input(type="file", class="form-control mb-3", id="image", name="image")
+        select(required class="form-select mb-3", id="CategoryId", name="CategoryId")
+          each category in categories
+            if category.id === course.Category.id
+              option(value=category.id, selected) #{category.name}
+            else
+              option(value=category.id) #{category.name}
+      .card-body.text-center
+        button(type="submit", class="btn btn-primary") Save

@@ -11,14 +11,6 @@ class CategoryController {
 		return categories;
 	}
 
-	async readById(id) {
-		const category = await this.category.findByPk(id);
-
-		if (!category) throw new Error("Categoria não encontrada!");
-
-		return category;
-	}
-
 	async create(category) {
 		const categoryExists = await this.category.findOne({
 			where: { name: category.name },

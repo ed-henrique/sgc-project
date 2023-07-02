@@ -1,24 +1,28 @@
 const { Op } = require("sequelize");
+const { User } = require("../models/index.js");
 
 class SubscriptionController {
 	constructor(SubscriptionModel) {
 		this.subscription = SubscriptionModel;
 	}
 
-	async readAll() {
-		const subscriptions = await this.subscription.findAll();
+	async readByUserId(id) {
+		const subscriptions = await this.subscription.findAll({where: { UserId: id }});
 
-		if (!subscriptions) throw new Error("Não há inscrições!");
+		if (!subscriptions) throw new Error("Inscrições não encontradas!");
 
 		return subscriptions;
 	}
 
-	async readById(id) {
-		const subscription = await this.subscription.findByPk(id);
+	async readByCourseId(id) {
+		const subscriptions = await this.subscription.findAll({
+			where: { CourseId: id },
+			include: User,
+		});
 
-		if (!subscription) throw new Error("Inscrição não encontrada!");
+		if (!subscriptions) throw new Error("Inscrições não encontradas!");
 
-		return subscription;
+		return subscriptions;
 	}
 
 	async create(subscription) {

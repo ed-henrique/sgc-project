@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Subscription.belongsTo(models.User);
+      Subscription.belongsTo(models.Course);
     }
   }
   Subscription.init({

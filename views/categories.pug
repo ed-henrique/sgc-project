@@ -1,0 +1,44 @@
+extends layout
+
+block head
+  link(rel="stylesheet", href="/stylesheets/categories.css")
+  script(type="module" src="/javascripts/categories.js" defer)
+
+block content
+  main(class="container d-flex flex-column align-items-center justify-content-center")
+    h2(class="mb-3") Add Category
+    form.d-flex.justify-content-center.align-items-center.mb-5(method="POST", action="/categories/create")
+        input(type="text", class="form-control me-3", id="name", placeholder="Name", name="name" required)
+        button(type="submit", class="btn btn-primary") Create
+
+    #modal.modal.fade(data-bs-backdrop="static", data-bs-keyboard="false", tabindex="-1", aria-labelledby="modalLabel", aria-hidden="true")
+      .modal-dialog.modal-dialog-centered
+        .modal-content
+          .modal-header
+            h2(class="modal-title fs-5", id="modalLabel") Edit Category
+            button(type="button", class="btn-close", data-bs-dismiss="modal", aria-label="Close")
+          form(method="POST")
+            .modal-body
+                .mb-3
+                  label(for="name", class="col-form-label") Name
+                  input(type="text", class="form-control", id="name" name="name" required)
+            .modal-footer
+              button(type="button", class="btn btn-secondary", data-bs-dismiss="modal") Close
+              button(type="submit", class="btn btn-primary") Submit
+
+    h2(class="mb-3") Categories
+    table.table.table-striped.w-50
+      thead
+        tr
+          th.col Name
+          th.col.text-center Actions
+      tbody
+        each category in categories.sort((a, b) => (a.name < b.name) ? -1 : 1)
+          tr.align-middle
+            td #{category.name}
+            td.d-flex.align-items-center.justify-content-center
+              button(class="btn btn-warning btn-sm me-2", data-bs-toggle="modal" data-bs-target="#modal" data-category-name=category.name, data-category-id=category.id)
+                i.bx.bx-edit
+              form(method="POST", action=`/categories/delete/${category.id}?_method=DELETE`)
+                button(type="submit" class="btn btn-danger btn-sm")
+                  i.bx.bx-trash

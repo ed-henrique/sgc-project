@@ -28,16 +28,19 @@ html(lang="en")
               a(class="nav-link", href="/") Home
             li(class=`nav-item${nav_courses}`)
               a(class="nav-link", href="/courses") Courses
-            li(class=`nav-item${nav_users}`)
-              a(class="nav-link", href="/users") Users
-            li(class=`nav-item${nav_categories}`)
-              a(class="nav-link", href="/categories") Categories
+            
+            if (role !== "student")
+              li(class=`nav-item${nav_users}`)
+                a(class="nav-link", href="/users") Users
+              li(class=`nav-item${nav_categories}`)
+                a(class="nav-link", href="/categories") Categories
+
             li(class=`nav-item${nav_certificates}`)
               a(class="nav-link", href="/certificates") Certificates
         ul(class="navbar-nav d-flex align-items-center justify-content-center mb-0")
           li(class="greetings pe-3") Hey, #{username}
           li
-            a(href="html/settings.html", class="btn btn-primary mx-3", type="submit") Settings
+            a(href="/users/settings", class="btn btn-primary mx-3") Settings
           li
             form(action="/users/logout", method="POST")
               button(type="submit", class="btn btn-primary") Logout

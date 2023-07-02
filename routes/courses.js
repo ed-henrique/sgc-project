@@ -12,20 +12,50 @@ const upload = multer({
 
 const { Course } = require("../models/index.js");
 const CourseController = require("../controllers/course.controller.js");
+const { Category } = require("../models/index.js");
+const CategoryController = require("../controllers/category.controller.js");
+const { Subscription } = require("../models/index.js");
+const SubscriptionController = require("../controllers/subscription.controller.js");
 
 const router = Router();
 const courseController = new CourseController(Course);
+const categoryController = new CategoryController(Category);
+const subscriptionController = new SubscriptionController(Subscription);
 
 // View routes
 
 router.get("/", auth("student"), async (req, res) => {
+	const id = req.userId;
+	const name = req.username;
+  	const role = req.userRole;
+
 	const courses = await courseController.readAll();
-	return res.render("courses", { title: "Courses", username: 'John Doe', active_nav: "courses", courses: courses });
+	const subscriptions = await subscriptionController.readByUserId(id);
+
+	return res.render("courses", {
+		title: "Courses",
+		id: id,
+		username: name,
+		role: role,
+		active_nav: "courses",
+		courses: courses,
+		subscriptions: subscriptions,
+	});
 });
 
 router.get("/course/:id", auth("student"), async (req, res) => {
-	const course = await courseController.readById(req.params.id);
-	return res.render("course", { title: "Course", username: 'John Doe', active_nav: "courses", course: course });
+	const id = req.params.id;
+	const name = req.username;
+  	const role = req.userRole;
+	const edit = req.query.edit;
+
+	const course = await courseController.readById(id);
+	const categories = await categoryController.readAll();
+	const subscriptions = await subscriptionController.readByCourseId(id);
+
+	if (edit && role !== "student") return res.render("course_edit", { title: "Course", username: name, role: role, active_nav: "courses", course: course, categories: categories });
+	
+	return res.render("course", { title: "Course", username: name, role: role, active_nav: "courses", course: course, subscriptions: subscriptions });
 });
 
 // API routes
@@ -91,37 +121,42 @@ router.put("/update/:id", [auth("admin"), upload.single("image")], async (req, r
 	}
 });
 
+router.post("/subscribe/:id", auth("student"), async (req, res) => {
+	try {
+		const CourseId = req.params.id;
+		const UserId = req.userId;
+		
+		await subscriptionController.create({
+			CourseId,
+			UserId,
+		});
+
+		res.redirect("/courses");
+	} catch (error) {
+		console.error(error);
+		res.redirect("/courses");
+	}
+});
+
 router.delete("/delete/:id", auth("admin"), async (req, res) => {
 	try {
 		await courseController.delete(req.params.id);
 
-		return res.status(200).send({
-			error: false,
-			message: "Curso removido com sucesso!",
-		});
+		res.redirect("/courses");
 	} catch (error) {
 		console.error(error);
-		return res.status(400).send({
-			error: true,
-			message: "Não foi possível remover o curso!",
-		});
+		res.redirect("/courses");
 	}
 });
 
-router.post("/close/:id", auth("admin"), async (req, res) => {
+router.put("/close/:id", auth("admin"), async (req, res) => {
 	try {
 		await courseController.close(req.params.id);
 	
-		return res.status(200).send({
-			error: false,
-			message: "Curso fechado com sucesso!",
-		});
+		res.redirect("/courses");
 	} catch (error) {
 		console.error(error);
-		return res.status(401).send({
-			error: true,
-			message: "Não foi possível fechar o curso!",
-		});
+		res.redirect("/courses");
 	}
 });
 

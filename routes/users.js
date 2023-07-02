@@ -21,8 +21,38 @@ const userController = new UserController(User);
 // View routes
 
 router.get("/", auth("admin"), async (req, res) => {
-	const users = await userController.readAll();
-	return res.render("users", { title: "Users", username: 'John Doe', active_nav: "users", users: users });
+	const name = req.username;
+  	const role = req.userRole;
+
+	let users = await userController.readAll();
+	
+	users.sort((a, b) => {
+		if (a.status < b.status) {
+			return -1;
+		}
+		if (a.status > b.status) {
+			return 1;
+		}
+		
+		const roleOrder = { root: 0, admin: 1, student: 2 };
+		const aRoleOrder = roleOrder[a.role.toLowerCase()];
+		const bRoleOrder = roleOrder[b.role.toLowerCase()];
+		
+		if (aRoleOrder < bRoleOrder) {
+			return -1;
+		}
+		if (aRoleOrder > bRoleOrder) {
+			return 1;
+		}
+		
+		return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+	});
+
+	if (req.userRole === "admin") {
+		users = users.filter(user => user.role.toLowerCase() !== "root");
+	}
+
+	return res.render("users", { title: "Users", username: name, role: role, active_nav: "users", users: users });
 });
 
 router.get("/login", async (req, res) => {
@@ -33,18 +63,13 @@ router.get("/signup", async (req, res) => {
 	return res.render("auth/signup", { title: "Signup" });
 });
 
-router.get("/settings", auth("admin"), async (req, res) => {
+router.get("/settings", auth("student"), async (req, res) => {
 	const id = req.userId;
-
-	if (id !== userId) {
-		return res.status(401).send({
-			error: true,
-			message: "Você não tem permissão para acessar este recurso!",
-		});
-	}
+	const name = req.username;
+	const role = req.userRole;
 
 	const user = await userController.readById(id);
-	return res.render("settings", { title: "Settings", username: user.name, active_nav: "", user: user });
+	return res.render("settings", { title: "Settings", username: name, role: role, active_nav: "", user: user });
 });
 
 // API routes
@@ -83,71 +108,54 @@ router.put("/update", [auth("student"), upload.single("image")], async (req, res
 	try {
 		const id = req.userId;
     	const image = req.file;
-		const { buffer, mimetype } = image;
-		const { name, changePassword, currentPassword, newPassword, newPasswordConfirmation } = req.body;
-		
+		const { name } = req.body;
+
 		const user = await userController.readById(id);
 
-		if (changePassword) {
-			if (newPassword !== newPasswordConfirmation) {
-			return res.status(400).send({
-					error: true,
-					message: "As senhas não coincidem!",
-				});
-			}
-	
-			if (!(await bcrypt.compare(currentPassword, user.password))) {
-				return res.status(400).send({
-					error: true,
-					message: "A senha atual está incorreta!",
-				});
-			}
-
+		if (image) {
+			const { buffer, mimetype } = image;
+			
 			await userController.update(id, {
 				image: buffer,
 				imageMimeType: mimetype,
 				name,
-				password: newPassword,
 			});
 		} else {
 			await userController.update(id, {
-				image: buffer,
-				imageMimeType: mimetype,
 				name,
-				password: user.password,
 			});
 		}
 
-		return res.status(200).send({
-			error: false,
-			message: "Usuário atualizado com sucesso!",
-		});
+		res.redirect("/users/settings");
 	} catch (error) {
 		console.error(error);
-		return res.status(400).send({
-			error: true,
-			message: "Não foi possível atualizar o usuário!",
-		});
+		res.redirect("/users/settings");
 	}
 });
 
-router.post("/upgrade/:id", auth("root"), async (req, res) => {
+router.put("/upgrade/:id", auth("root"), async (req, res) => {
 	try {
 		const id = req.params.id;
 	
-		const access_token = await userController.upgrade(id);
-	
-		return res.status(200).send({
-			error: false,
-			message: "Usuário evoluído com sucesso!",
-			access_token,
-		});
+		await userController.upgrade(id);
+
+		res.redirect("/users");
 	} catch (error) {
 		console.error(error);
-		return res.status(401).send({
-			error: true,
-			message: "Não foi possível evoluir o usuário!",
-		});
+		res.redirect("/users");
+	}
+});
+
+router.put("/suspend/:id", auth("admin"), async (req, res) => {
+	try {
+		const id = req.params.id;
+	
+		await userController.suspend(id);
+
+		res.redirect("/users");
+	} catch (error) {
+		console.error(error);
+		res.redirect("/users");
 	}
 });
 

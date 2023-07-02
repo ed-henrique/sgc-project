@@ -43,7 +43,7 @@ class UserController {
 			user.password = await bcrypt.hash(user.password, 8);
 			await this.user.create(user);
 
-			const token = jwt.sign({ email: user.email, role: user.role, createdAt: new Date() }, process.env.SECRET, {
+			const token = jwt.sign({ id: user.id, name: user.name, email: user.email, role: user.role, createdAt: new Date() }, process.env.SECRET, {
 				expiresIn: this.expiration,
 			});
 
@@ -65,6 +65,31 @@ class UserController {
 		}
 	}
 
+	async upgrade(id) {
+		const userExists = await this.user.findOne({
+			where: { id },
+		});
+
+		if (userExists) {
+			await this.user.update({ role: "admin" }, { where: { id } });
+		} else {
+			throw new Error("Usuário não existe!");
+		}
+	}
+
+	async suspend(id) {
+		const userExists = await this.user.findOne({
+			where: { id },
+		});
+
+		if (userExists && userExists.role !== "root") {
+			const newStatus = userExists.status === "suspended" ? "active" : "suspended";
+			await this.user.update({ status: newStatus }, { where: { id } });
+		} else {
+			throw new Error("Usuário não existe!");
+		}
+	}
+
 	async delete(id) {
 		await this.user.destroy({ where: { id } });
 	}
@@ -79,7 +104,7 @@ class UserController {
 				throw new Error("Senha incorreta!");
 			}
 			
-			const token = jwt.sign({ name: userExists.name, email: user.email, role: userExists.role, createdAt: new Date() }, process.env.SECRET, {
+			const token = jwt.sign({ id: userExists.id, name: userExists.name, email: user.email, role: userExists.role, createdAt: new Date() }, process.env.SECRET, {
 				expiresIn: this.expiration,
 			});
 

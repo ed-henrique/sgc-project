@@ -3,27 +3,46 @@ extends layout
 block content
   main(class="container d-flex align-items-center justify-content-center")
     .row.justify-content-center
-      each course, index in courses
+      each course, index in courses.sort((a, b) => { return (a.status < b.status) ? 1 : -1 })
         - const start_date = course.start_date.toString().slice(0, 16)
+        - const isClosed = course.status === "Closed" ? "dark" : "light"
+        - const isClosedInverse = course.status === "Closed" ? "light" : "dark"
 
-        div(class=`col-sm-3${(index <= courses.length - (1 + courses.length % 4)) ? ' mb-3' : ''}`)
-          .card.h-100
-            img(class="card-img-top" src=course.image, alt=course.name)
-            .card-body
-              h5(class="card-title") #{course.name}
-              p(class="card-text") #{course.description}
-            ul(class="list-group list-group-flush")
-              li(class="list-group-item d-flex align-items-center")
-                i.bx.bx-bookmark.pe-1
-                | #{course.Category.name}
-              li(class="list-group-item d-flex align-items-center")
-                i.bx.bx-time-five.pe-1
-                | #{course.workload}h
-              li(class="list-group-item d-flex align-items-center")
-                i.bx.bx-calendar.pe-1
-                | #{start_date}
-              li(class="list-group-item d-flex align-items-center")
-                i.bx.bx-info-circle.pe-1
-                | #{course.status}
-            .card-body.text-end.mt-auto
-              a(href=`/courses/course/${course.id}`, class="btn btn-primary") Access
+        if (role === "student" && !(course.status === "Closed")) || role !== "student"
+          div(class=`col-sm-3${(index <= courses.length - (1 + courses.length % 4)) ? ' mb-3' : ''}`)
+            div(class=`card text-bg-${isClosed} h-100`)
+              img(class="card-img-top" src=course.image, alt=course.name)
+              .card-body
+                h5(class="card-title") #{course.name}
+                p(class="card-text") #{course.description}
+              ul(class="list-group list-group-flush")
+                li(class=`list-group-item list-group-item-${isClosed} d-flex align-items-center`)
+                  i.bx.bx-bookmark.pe-1
+                  | #{course.Category.name}
+                li(class=`list-group-item list-group-item-${isClosed} d-flex align-items-center`)
+                  i.bx.bx-time-five.pe-1
+                  | #{course.workload}h
+                li(class=`list-group-item list-group-item-${isClosed} d-flex align-items-center`)
+                  i.bx.bx-calendar.pe-1
+                  | #{start_date}
+                li(class=`list-group-item list-group-item-${isClosed} d-flex align-items-center`)
+                  i.bx.bx-info-circle.pe-1
+                  | #{course.status}
+              .card-body.d-flex.justify-content-between.mt-auto
+                a(href=`/courses/course/${course.id}`, class="btn btn-primary me-2")
+                  i.bx.bx-book-open
+
+                if !(course.status === "Closed") && !(subscriptions.some(subscription => subscription.CourseId === course.id))
+                  form(action=`/courses/subscribe/${course.id}`, method="POST")
+                    button(type="submit", class="btn btn-info me-2")
+                      i.bx.bx-user-plus
+
+                if role !== "student"
+                  a.btn.btn-warning.me-2(href=`/courses/course/${course.id}?edit=true`)
+                    i.bx.bx-edit
+                  form(action=`/courses/close/${course.id}?_method=PUT`, method="POST")
+                    button(type="submit", class=`btn btn-${isClosedInverse} me-2`)
+                      i.bx.bx-x
+                  form(action=`/courses/delete/${course.id}?_method=DELETE`, method="POST")
+                    button(type="submit", class="btn btn-danger")
+                      i.bx.bx-trash
