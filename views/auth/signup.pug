@@ -4,19 +4,19 @@ block content
   main.d-flex.flex-column.justify-content-center.align-items-center
     .auth.animate__animated.animate__fadeIn.container.py-3.px-3
         h2.text-center Signup
-        form(action="/users/signup", method="POST")
+        form(action="/users/create", method="POST")
             .mb-3
                 label(for="name", class="form-label") Name
-                input(type="text", class="form-control", id="name")
+                input(type="text", class="form-control", id="name", name="name")
             .mb-3
                 label(for="email", class="form-label") Email
-                input(type="email", class="form-control", id="email")
+                input(type="email", class="form-control", id="email", name="email")
             .mb-3
                 label(for="password", class="form-label") Password
-                input(type="password", class="form-control", id="password")
+                input(type="password", class="form-control", id="password", name="password")
             .mb-3
                 label(for="confirmPassword", class="form-label") Confirm Password
-                input(type="password", class="form-control", id="confirmPassword")
+                input(type="password", class="form-control", id="confirmPassword", name="confirmPassword")
             .w-100.text-center.flex-column.d-flex.align-items-center.justify-content-center
                 button(type="submit", class="btn btn-primary mb-3") Submit
                 span Already have an account yet? 

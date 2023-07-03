@@ -3,10 +3,10 @@ class CertificateController {
 		this.certificate = CertificateModel;
 	}
 
-	async readAll() {
-		const certificates = await this.certificate.findAll();
+	async readByUserId(id) {
+		const certificates = await this.certificate.findAll({ where: { UserId: id }});
 
-		if (!certificates) throw new Error("Não há certificados!");
+		if (!certificates) throw new Error("Inscrições não encontradas!");
 
 		return certificates;
 	}
@@ -29,10 +29,6 @@ class CertificateController {
 		} else {
 			throw new Error("Certificado já existe!");
 		}
-	}
-
-	async delete(id) {
-		await this.certificate.destroy({ where: { id } });
 	}
 };
 

@@ -16,11 +16,16 @@ class SubscriptionController {
 
 	async readByCourseId(id) {
 		const subscriptions = await this.subscription.findAll({
+			attributes: ["id", "UserId", "CourseId"],
 			where: { CourseId: id },
 			include: User,
 		});
 
 		if (!subscriptions) throw new Error("Inscrições não encontradas!");
+
+		subscriptions.forEach(async subscription => {
+			subscription.User.image = `data:${subscription.User.imageMimeType};base64,${btoa(subscription.User.image.reduce((data, byte) => data + String.fromCharCode(byte), ""))}`;
+		});
 
 		return subscriptions;
 	}

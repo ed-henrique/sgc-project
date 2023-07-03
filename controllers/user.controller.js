@@ -41,7 +41,7 @@ class UserController {
 
 		if (!userExists) {
 			user.password = await bcrypt.hash(user.password, 8);
-			await this.user.create(user);
+			const user = await this.user.create(user);
 
 			const token = jwt.sign({ id: user.id, name: user.name, email: user.email, role: user.role, createdAt: new Date() }, process.env.SECRET, {
 				expiresIn: this.expiration,

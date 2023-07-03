@@ -121,6 +121,21 @@ router.put("/update/:id", [auth("admin"), upload.single("image")], async (req, r
 	}
 });
 
+router.put("/course/:id/update_subscription", auth("student"), async (req, res) => {
+	try {
+		const userId = req.userId;
+		const courseId = req.params.id;
+		const { status } = req.body;
+
+		await subscriptionController.update(userId, courseId, { status });
+
+		res.redirect(`/courses/course/${courseId}`);
+	} catch (error) {
+		console.error(error);
+		res.redirect(`/courses/course/${courseId}`);
+	}
+});
+
 router.post("/subscribe/:id", auth("student"), async (req, res) => {
 	try {
 		const CourseId = req.params.id;
@@ -146,6 +161,20 @@ router.delete("/delete/:id", auth("admin"), async (req, res) => {
 	} catch (error) {
 		console.error(error);
 		res.redirect("/courses");
+	}
+});
+
+router.delete("/remove_subscription/:id", auth("admin"), async (req, res) => {
+	try {
+		const id = req.params.id;
+		const courseId = req.query.courseId;
+
+		await subscriptionController.delete(id);
+
+		res.redirect(`/courses/course/${courseId}`);
+	} catch (error) {
+		console.error(error);
+		res.redirect(`/courses/course/${courseId}`);
 	}
 });
 

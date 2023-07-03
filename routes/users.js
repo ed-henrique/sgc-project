@@ -1,4 +1,6 @@
 const { Router } = require('express');
+const fs = require('fs');
+const path = require('path');
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const auth = require("../middlewares/auth.js");
@@ -74,33 +76,30 @@ router.get("/settings", auth("student"), async (req, res) => {
 
 // API routes
 
-router.post("/create", upload.single("image"), async (req, res) => {
+router.post("/create", async (req, res) => {
 	try {
-    	const image = req.file;
-		const { buffer, mimetype } = image;
-		const { name, email, role, password } = req.body;
+		const buffer = await fs.promises.readFile(path.join(__dirname, '..', 'public', 'images', 'stock_pfp.jpg'));
+		const { name, email, password, confirmPassword } = req.body;
 		
+		if (password !== confirmPassword) {
+			throw new Error("As senhas não coincidem!");
+		}
+
 		const access_token = await userController.create({
 			image: buffer,
-			imageMimeType: mimetype,
+			imageMimeType: "image/jpg",
 			name,
 			email,
-			role,
+			role: "student",
 			status: "active",
 			password,
 		});
 
-		return res.status(201).send({
-			error: false,
-			message: "Usuário criado com sucesso!",
-			access_token,
-		});
+		res.cookie("jwt", access_token, { httpOnly: true, sameSite: "strict", maxAge: DAY });
+		res.redirect("/");
 	} catch (error) {
 		console.error(error);
-		return res.status(400).send({
-			error: true,
-			message: "Não foi possível criar o usuário!",
-		});
+		res.redirect("/users/signup");
 	}
 });
 
