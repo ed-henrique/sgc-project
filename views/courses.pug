@@ -1,7 +1,14 @@
 extends layout
 
+block head
+  link(rel="stylesheet", href="/stylesheets/courses.css")
+
 block content
-  main(class="container d-flex align-items-center justify-content-center")
+  main(class="container d-flex flex-column align-items-center justify-content-center")
+    if role !== "student"
+      .btn.btn-primary.mb-5.col-sm-2
+        a(href="/courses/create") Add Course
+
     .row.justify-content-center
       each course, index in courses.sort((a, b) => { return (a.status < b.status) ? 1 : -1 })
         - const start_date = course.start_date.toString().slice(0, 16)

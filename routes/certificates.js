@@ -17,17 +17,20 @@ router.get("/", auth("student"), async (req, res) => {
 	return res.render("certificates", { title: "Certificates", username: name, role: role, active_nav: "certificates", certificates: certificates });
 });
 
+router.get("/check", async (req, res) => {
+	const code = req.query.code;
 
-router.get("/emit/:id", auth("student"), async (req, res) => {
-	try {
-		const id = req.params.id;
-		await certificateController.emit(id);
+	if (code) {
+		const certificate = await certificateController.readByCode(code);
 
-		res.redirect("/certificates");
-	} catch (error) {
-		console.error(error);
-		res.redirect("/certificates");
+		if (certificate) {
+			return res.render("check_certificate", { title: "Check Certificate", certificate: certificate });
+		}
+
+		return res.render("check_certificate", { title: "Check Certificate", code: "false" });
 	}
+
+	return res.render("check_certificate", { title: "Check Certificate" });
 });
 
 module.exports = router;

@@ -14,12 +14,15 @@ const { Course } = require("../models/index.js");
 const CourseController = require("../controllers/course.controller.js");
 const { Category } = require("../models/index.js");
 const CategoryController = require("../controllers/category.controller.js");
+const { Certificate } = require("../models/index.js");
+const CertificateController = require("../controllers/certificate.controller.js");
 const { Subscription } = require("../models/index.js");
 const SubscriptionController = require("../controllers/subscription.controller.js");
 
 const router = Router();
 const courseController = new CourseController(Course);
 const categoryController = new CategoryController(Category);
+const certificateController = new CertificateController(Certificate);
 const subscriptionController = new SubscriptionController(Subscription);
 
 // View routes
@@ -43,8 +46,18 @@ router.get("/", auth("student"), async (req, res) => {
 	});
 });
 
+router.get("/create", auth("admin"), async (req, res) => {
+	const name = req.username;
+  	const role = req.userRole;
+
+	const categories = await categoryController.readAll();
+
+	return res.render("add_course", { title: "Create Course", username: name, role: role, active_nav: "courses", categories: categories });
+});
+
 router.get("/course/:id", auth("student"), async (req, res) => {
 	const id = req.params.id;
+	const userId = req.userId;
 	const name = req.username;
   	const role = req.userRole;
 	const edit = req.query.edit;
@@ -53,9 +66,11 @@ router.get("/course/:id", auth("student"), async (req, res) => {
 	const categories = await categoryController.readAll();
 	const subscriptions = await subscriptionController.readByCourseId(id);
 
-	if (edit && role !== "student") return res.render("course_edit", { title: "Course", username: name, role: role, active_nav: "courses", course: course, categories: categories });
+	if (edit && role !== "student") return res.render("course_edit", { title: "Edit Course", username: name, role: role, active_nav: "courses", course: course, categories: categories });
 	
-	return res.render("course", { title: "Course", username: name, role: role, active_nav: "courses", course: course, subscriptions: subscriptions });
+	if (role === "student" && course.status === "Closed") return res.redirect("/courses");
+
+	return res.render("course", { title: "Course", id: userId, username: name, role: role, active_nav: "courses", course: course, subscriptions: subscriptions });
 });
 
 // API routes
@@ -64,29 +79,23 @@ router.post("/create", [auth("admin"), upload.single("image")], async (req, res)
 	try {
 		const image = req.file;
 		const { buffer, mimetype } = image;
-		const { name, description, status, workload, start_date, CategoryId } = req.body;
+		const { name, description, workload, start_date, CategoryId } = req.body;
 		
 		await courseController.create({
 			image: buffer,
 			imageMimeType: mimetype,
 			name,
 			description,
-			status,
+			status: "open",
 			workload,
 			start_date,
 			CategoryId,
 		});
 
-		return res.status(201).send({
-			error: false,
-			message: "Curso criado com sucesso!",
-		});
+		return res.redirect("/courses");
 	} catch (error) {
 		console.error(error);
-		return res.status(400).send({
-			error: true,
-			message: "Não foi possível criar o curso!",
-		});
+		return res.redirect("/courses");
 	}
 });
 
@@ -121,18 +130,20 @@ router.put("/update/:id", [auth("admin"), upload.single("image")], async (req, r
 	}
 });
 
-router.put("/course/:id/update_subscription", auth("student"), async (req, res) => {
+router.put("/update_subscription/:id", auth("student"), async (req, res) => {
 	try {
 		const userId = req.userId;
 		const courseId = req.params.id;
 		const { status } = req.body;
 
-		await subscriptionController.update(userId, courseId, { status });
+		const statusValue = (typeof status === "string") ? 1 : (status) ? status.length : 0;
 
-		res.redirect(`/courses/course/${courseId}`);
+		await subscriptionController.update(userId, courseId, { status: statusValue });
+
+		return res.redirect(`/courses/course/${courseId}`);
 	} catch (error) {
 		console.error(error);
-		res.redirect(`/courses/course/${courseId}`);
+		res.redirect("/courses");
 	}
 });
 
@@ -144,6 +155,7 @@ router.post("/subscribe/:id", auth("student"), async (req, res) => {
 		await subscriptionController.create({
 			CourseId,
 			UserId,
+			status: 0,
 		});
 
 		res.redirect("/courses");
@@ -180,7 +192,20 @@ router.delete("/remove_subscription/:id", auth("admin"), async (req, res) => {
 
 router.put("/close/:id", auth("admin"), async (req, res) => {
 	try {
-		await courseController.close(req.params.id);
+		const id = req.params.id;
+
+		const subscriptions = await subscriptionController.readByCourseId(id);
+
+		subscriptions.forEach(async (subscription) => {
+			if (subscription.status >= 9) {
+				await certificateController.create({
+					UserId: subscription.UserId,
+					CourseId: subscription.CourseId,
+				});
+			}
+		});
+
+		await courseController.close(id);
 	
 		res.redirect("/courses");
 	} catch (error) {

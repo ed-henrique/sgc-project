@@ -20,19 +20,3 @@ checkboxes.forEach(checkbox => {
         progressBar.style.width = `${(checkedCount / checkboxes.length) * 100}%`;
     });
 });
-
-const form = document.querySelector('.card form');
-
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const courseId = window.location.pathname.split('/')[3];
-    await fetch(`/courses/course/${courseId}/update_subscription`, {
-        method: "PUT",
-        body: JSON.stringify({ status }),
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-});
-

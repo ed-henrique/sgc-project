@@ -1,0 +1,21 @@
+extends auth/auth_layout
+
+block content
+    main.d-flex.flex-column.justify-content-center.align-items-center
+        .auth.container.py-3.px-3
+            h2.text-center Check Certificate
+            form(action="/certificates/check", method="GET")
+                .mb-3
+                    label(for="code", class="form-label") Certificate Code
+                    input(type="text", class="form-control", id="code" name="code" required)
+                .w-100.text-center.flex-column.d-flex.align-items-center.justify-content-center
+                    button(type="submit", class="btn btn-primary mb-3") Submit
+                    span Just want to log in? 
+                        a(href="/users/login") Log In
+
+            if (typeof certificate !== 'undefined' && typeof certificate !== 'null')
+                .alert.alert-success.text-center.mt-3
+                    | Certificate is valid for "#{certificate.User.name}" on course "#{certificate.Course.name}"
+            else if (code === "false")
+                .alert.alert-danger.text-center.mt-3
+                    | Certificate is invalid

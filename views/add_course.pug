@@ -1,0 +1,28 @@
+extends layout
+
+block head
+  link(rel="stylesheet", href="/stylesheets/course.css")
+  script(type="module", src="/javascripts/course_edit.js" defer)
+
+block content
+  main(class="container d-flex align-items-center justify-content-center")
+    form.card(action="/courses/create", method="POST", enctype="multipart/form-data")
+      img(id="selected" class="card-img-top" src="/images/stock.jpg", alt="Course Image")
+      .card-body
+        label.form-label(for="name") Course Name
+        input(required type="text", class="form-control mb-3", id="name", name="name")
+        label.form-label(for="description") Course Description
+        textarea(required class="form-control mb-3", id="description", name="description")
+        label.form-label(for="workload") Workload
+        input(required type="number", class="form-control mb-3", id="workload", name="workload")
+        label.form-label(for="start_date") Start Date
+        input(required type="date", class="form-control mb-3", id="start_date", name="start_date" value=new Date().toISOString().substring(0,10))
+        label.form-label(for="image", class="form-label") Image
+        input(type="file", class="form-control mb-3", id="image", name="image")
+        select(required class="form-select mb-3", id="CategoryId", name="CategoryId")
+          option(selected) Category
+
+          each category in categories
+            option(value=category.id) #{category.name}
+      .card-body.text-center
+        button(type="submit", class="btn btn-primary") Create

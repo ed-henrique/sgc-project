@@ -9,7 +9,6 @@ block content
         tr
           th.col Course Name
           th.col Code
-          th.col.text-center Actions
       tbody
         if certificates.length === 0
           tr
@@ -19,8 +18,3 @@ block content
             tr(class="align-middle")
               td #{certificate.Course.name}
               td #{certificate.code}
-              td
-                .d-flex.justify-content-center
-                  form(action=`/certificates/emit/${certificate.id}`, method="POST")
-                    button(type="submit", class=`btn btn-dark btn-sm`)
-                      i.bx.bx-download

@@ -16,7 +16,7 @@ class SubscriptionController {
 
 	async readByCourseId(id) {
 		const subscriptions = await this.subscription.findAll({
-			attributes: ["id", "UserId", "CourseId"],
+			attributes: ["id", "status", "UserId", "CourseId"],
 			where: { CourseId: id },
 			include: User,
 		});
@@ -49,11 +49,11 @@ class SubscriptionController {
 		}
 	}
 
-	async update(id, data) {
-		const subscriptionExists = await this.subscription.findOne({ where: { id } });
+	async update(userId, courseId, data) {
+		const subscriptionExists = await this.subscription.findOne({ where: { UserId: userId, CourseId: courseId }, attributes: ["id"] });
 
 		if (subscriptionExists) {
-			await this.subscription.update(data, { where: { id } });
+			await this.subscription.update(data, { where: { id: subscriptionExists.id } });
 		} else {
 			throw new Error("Inscrição não existe!");
 		}
