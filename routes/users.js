@@ -168,10 +168,7 @@ router.post("/login", async (req, res) => {
 		return res.redirect("/");
 	} catch (error) {
 		console.error(error);
-		return res.status(401).send({
-			error: true,
-			message: "Não foi possível logar o usuário!",
-		});
+		return res.redirect("/users/login");
 	}
 });
 
@@ -181,10 +178,7 @@ router.post("/logout", auth("student"), async (req, res) => {
 		return res.redirect("/users/login");
 	} catch (error) {
 		console.error(error);
-		return res.status(401).send({
-			error: true,
-			message: "Não foi possível deslogar o usuário!",
-		});
+		return res.redirect("/");
 	}
 });
 

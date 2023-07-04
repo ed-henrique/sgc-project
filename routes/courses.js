@@ -103,30 +103,36 @@ router.put("/update/:id", [auth("admin"), upload.single("image")], async (req, r
 	try {
 		const id = req.params.id;
 		const image = req.file;
-		const { buffer, mimetype } = image;
 		const { name, description, status, workload, start_date, CategoryId } = req.body;
 		
-		await courseController.update(id, {
-			image: buffer,
-			imageMimeType: mimetype,
-			name,
-			description,
-			status,
-			workload,
-			start_date,
-			CategoryId,
-		});
+		if (image) {
+			const { buffer, mimetype } = image;
+			
+			await courseController.update(id, {
+				image: buffer,
+				imageMimeType: mimetype,
+				name,
+				description,
+				status,
+				workload,
+				start_date,
+				CategoryId
+			});
+		} else {
+			await courseController.update(id, {
+				name,
+				description,
+				status,
+				workload,
+				start_date,
+				CategoryId,
+			});
+		}
 
-		return res.status(200).send({
-			error: false,
-			message: "Curso atualizado com sucesso!",
-		});
+		res.redirect("/courses");
 	} catch (error) {
 		console.error(error);
-		return res.status(400).send({
-			error: true,
-			message: "Não foi possível atualizar o curso!",
-		});
+		res.redirect("/courses");
 	}
 });
 
