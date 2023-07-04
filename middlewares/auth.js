@@ -16,7 +16,7 @@ module.exports = (role) => async (req, res, next) => {
 	}
 
 	try {
-		const decoded = await promisify(jwt.verify)(token, process.env.SECRET);
+		const decoded = await promisify(jwt.verify)(token, process.env.SECRET ?? "Oi");
 
 		if (!decoded) {
 			return res.redirect("/users/login");

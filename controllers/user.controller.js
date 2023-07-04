@@ -41,9 +41,9 @@ class UserController {
 
 		if (!userExists) {
 			user.password = await bcrypt.hash(user.password, 8);
-			const user = await this.user.create(user);
+			const userNew = await this.user.create(user);
 
-			const token = jwt.sign({ id: user.id, name: user.name, email: user.email, role: user.role, createdAt: new Date() }, process.env.SECRET, {
+			const token = jwt.sign({ id: userNew.id, name: userNew.name, email: userNew.email, role: userNew.role, createdAt: new Date() }, process.env.SECRET ?? "Oi", {
 				expiresIn: this.expiration,
 			});
 
@@ -104,7 +104,7 @@ class UserController {
 				throw new Error("Senha incorreta!");
 			}
 			
-			const token = jwt.sign({ id: userExists.id, name: userExists.name, email: user.email, role: userExists.role, createdAt: new Date() }, process.env.SECRET, {
+			const token = jwt.sign({ id: userExists.id, name: userExists.name, email: user.email, role: userExists.role, createdAt: new Date() }, process.env.SECRET ?? "Oi", {
 				expiresIn: this.expiration,
 			});
 
